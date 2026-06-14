@@ -1,5 +1,5 @@
 blueprint:
-  name: 🧹 Cycle Aspirateur Intelligent
+  name: Cycle to clean with vacuum
   description: Active la prise, attend la connexion de l'aspirateur, lance le nettoyage, puis coupe la prise une fois rechargé.
   domain: script
   input:
