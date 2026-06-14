@@ -5,21 +5,22 @@ blueprint:
   input:
     switch_prise:
       name: Prise de l'aspirateur
-      description: "Le switch qui alimente la base de l'aspirateur."
+      description: Le switch qui alimente la base de l'aspirateur.
       selector:
         entity:
           filter:
             - domain: switch
     vacuum_entity:
       name: Aspirateur Robot
-      description: "L'entité de l'aspirateur (ex: vacuum.roborock)."
+      description: >-
+        L'entité de l'aspirateur (ex: vacuum.roborock).
       selector:
         entity:
           filter:
             - domain: vacuum
     battery_sensor:
       name: Capteur de batterie
-      description: "Le capteur de niveau de batterie associé à cet aspirateur."
+      description: Le capteur de niveau de batterie associé à cet aspirateur.
       selector:
         entity:
           filter:
@@ -27,12 +28,12 @@ blueprint:
               device_class: battery
     nom_piece:
       name: Nom de la pièce / zone
-      description: "Utilisé pour personnaliser la notification (ex: Garage, SdB)."
+      description: Utilisé pour personnaliser la notification (ex: Garage, SdB).
       selector:
         text:
     enable_notification:
       name: Activer la notification
-      description: "Envoyer une notification sur le téléphone de Bruno au début de la recharge."
+      description: Envoyer une notification sur le téléphone de Bruno au début de la recharge.
       default: true
       selector:
         boolean:
@@ -67,7 +68,8 @@ sequence:
 
   # 5. Notification optionnelle
   - if:
-      - "{{ enable_notification }}"
+      - condition: template
+        value_template: "{{ enable_notification }}"
     then:
       - action: notify.mobile_app_bruno
         data:
