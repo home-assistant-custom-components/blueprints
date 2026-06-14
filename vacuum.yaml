@@ -1,43 +1,38 @@
 blueprint:
-  name: 🧹 Cycle Aspirateur Intelligent
-  description: Active la prise, attend la connexion de l'aspirateur, lance le nettoyage, puis coupe la prise une fois rechargé.
+  name: "🧹 Cycle Aspirateur Intelligent"
+  description: "Active la prise, attend la connexion de l'aspirateur, lance le nettoyage, puis coupe la prise une fois rechargé."
   domain: script
   input:
     switch_prise:
-      name: Prise de l'aspirateur
-      description: >-
-        Le switch qui alimente la base de l'aspirateur.
+      name: "Prise de l'aspirateur"
+      description: "Le switch qui alimente la base de l'aspirateur"
       selector:
         entity:
           filter:
             - domain: switch
     vacuum_entity:
-      name: Aspirateur Robot
-      description: >-
-        L'entité de l'aspirateur (ex: vacuum.roborock).
+      name: "Aspirateur Robot"
+      description: "L entite de l aspirateur comme vacuum.roborock"
       selector:
         entity:
           filter:
             - domain: vacuum
     battery_sensor:
-      name: Capteur de batterie
-      description: >-
-        Le capteur de niveau de batterie associé à cet aspirateur.
+      name: "Capteur de batterie"
+      description: "Le capteur de niveau de batterie associe a cet aspirateur"
       selector:
         entity:
           filter:
             - domain: sensor
               device_class: battery
     nom_piece:
-      name: Nom de la pièce / zone
-      description: >-
-        Utilisé pour personnaliser la notification (ex: Garage, SdB).
+      name: "Nom de la piece / zone"
+      description: "Utilise pour personnaliser la notification exemple Garage ou SdB"
       selector:
         text:
     enable_notification:
-      name: Activer la notification
-      description: >-
-        Envoyer une notification sur le téléphone de Bruno au début de la recharge.
+      name: "Activer la notification"
+      description: "Envoyer une notification sur le telephone de Bruno au debut de la recharge"
       default: true
       selector:
         boolean:
