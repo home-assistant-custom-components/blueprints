@@ -1,0 +1,89 @@
+blueprint:
+  name: 🧹 Cycle Aspirateur Intelligent
+  description: Active la prise, attend la connexion de l'aspirateur, lance le nettoyage, puis coupe la prise une fois rechargé.
+  domain: script
+  input:
+    switch_prise:
+      name: Prise de l'aspirateur
+      description: Le switch qui alimente la base de l'aspirateur.
+      selector:
+        entity:
+          filter:
+            - domain: switch
+    vacuum_entity:
+      name: Aspirateur Robot
+      description: L'entité de l'aspirateur (ex: vacuum.roborock).
+      selector:
+        entity:
+          filter:
+            - domain: vacuum
+    battery_sensor:
+      name: Capteur de batterie
+      description: Le capteur de niveau de batterie associé à cet aspirateur.
+      selector:
+        entity:
+          filter:
+            - domain: sensor
+              device_class: battery
+    nom_piece:
+      name: Nom de la pièce / zone
+      description: Utilisé pour personnaliser la notification (ex: Garage, SdB).
+      selector:
+        text:
+    enable_notification:
+      name: Activer la notification
+      description: Envoyer une notification sur le téléphone de Bruno au début de la recharge.
+      default: true
+      selector:
+        boolean:
+
+sequence:
+  # 1. Allumage de la prise
+  - action: switch.turn_on
+    target:
+      entity_id: !input switch_prise
+
+  # 2. Attente que l'aspirateur soit détecté sur sa base (docked)
+  - wait_for_trigger:
+      - trigger: state
+        entity_id: !input vacuum_entity
+        to: docked
+    timeout:
+      minutes: 3
+    continue_on_timeout: false
+
+  # 3. Démarrage de l'aspirateur
+  - action: vacuum.start
+    target:
+      entity_id: !input vacuum_entity
+
+  # 4. Attente du retour à la base après le nettoyage
+  - wait_for_trigger:
+      - trigger: state
+        entity_id: !input vacuum_entity
+        to: docked
+    timeout:
+      hours: 1
+
+  # 5. Notification optionnelle (conditionnée par le choix dans l'UI)
+  - if:
+      - {{ enable_notification }}
+    then:
+      - action: notify.mobile_app_bruno
+        data:
+          title: "Aspirateur {{ nom_piece }} - 🔋{{ states(battery_sensor) }}%"
+          message: En cours de recharge
+
+  # 6. Attente que la batterie dépasse 95%
+  - wait_for_trigger:
+      - trigger: numeric_state
+        entity_id: !input battery_sensor
+        above: 95
+    timeout:
+      hours: 3
+
+  # 7. Appel du script de confirmation d'arrêt
+  - action: script.confirmer_arret_de_la_prise_de_l_aspirateur
+    data:
+      vacuum_id: !input switch_prise
+      vacuum_battery_id: !input battery_sensor
